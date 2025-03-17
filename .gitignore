@@ -1,0 +1,10 @@
+/.idea/
+*corpora_tokenized/
+*corpora/
+*splinter/
+*tokenizers/
+*trigram_models/
+*logs/
+*__pycache__/
+/data/
+/raw_data/
