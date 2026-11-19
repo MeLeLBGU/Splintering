@@ -8,6 +8,7 @@ The downstream evaluation DictaBERT-Splinter models can be found [here](https://
 The following example trains Splinter on Hebrew Wikipedia, encodes the training corpus, and uses it to train a BPE tokenizer:
 
 ```python
+from tktkt
 from src.SplinterTrainer import SplinterTrainer
 from src.TextProcessorWithEncoding import TextProcessorWithEncoding
 from src.language_utils.LanguageUtilsFactory import LanguageUtilsFactory
