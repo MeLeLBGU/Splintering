@@ -1,15 +1,15 @@
-import os
+from scripts.params import set_run_params, get_dummy_experiment
+from scripts.logger import get_logger, initialize_logger
 
+import os
 import sentencepiece as spm
 
-from src.TextProcessorForDemo import TextProcessorForDemo
-from src.language_utils.LanguageUtilsFactory import LanguageUtilsFactory
-from src.language_utils.LanguageUtilsInterface import LanguageUtilsInterface
-from src.logger import get_logger, initialize_logger
-from src.params import set_run_params, get_dummy_experiment
-from src.utils.path_utils import get_logs_dir, get_tokenizers_dir
-from src.utils.utils import (get_reductions_map_from_file, get_new_unicode_chars_map_from_file,
-                             get_new_unicode_chars_inverted_map_from_file)
+from splintering.text_processors import TextProcessorForDemo
+from splintering.utils.languages import LanguageUtilsFactory
+from splintering.utils.languages import LanguageUtilsInterface
+from splintering.utils.path_utils import get_logs_dir, get_tokenizers_dir
+from splintering.utils.misc import (get_reductions_map_from_file, get_new_unicode_chars_map_from_file,
+                                    get_new_unicode_chars_inverted_map_from_file)
 
 
 def demo(text: str, language_utils: LanguageUtilsInterface) -> None:

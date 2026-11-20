@@ -1,9 +1,10 @@
+from scripts.params import get_run_params
+
 import sentencepiece as spm
 
-from src.logger import get_logger
-from src.params import get_run_params
-from src.utils.path_utils import get_logs_dir
-from src.utils.utils import decode_tokens_vocab_file
+from splintering.utils.logger import get_logger
+from splintering.utils.path_utils import get_logs_dir
+from splintering.utils.misc import decode_tokens_vocab_file
 
 
 def train_tokenizer(tokenizer_type, vocab_size, input_path, output_path):

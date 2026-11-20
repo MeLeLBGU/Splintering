@@ -1,8 +1,8 @@
 import copy
 from datetime import datetime, timezone
 
-run_params = {}  # value is filled by set_run_params in main
 
+run_params = {}  # value is filled by set_run_params in main
 
 def set_run_params(params):
     global run_params

@@ -38,7 +38,7 @@ else:
     CORPORA = [WIKIPEDIA_HEADER]
     EXPERIMENT_TYPES = ['all_letters', 'baseline']
 
-def format_static_checks_results_file(file_paths: [str], output_path: str):
+def format_static_checks_results_file(file_paths: list[str], output_path: str):
     results_map = get_empty_results_map()
 
     sorted_file_paths = sorted(file_paths)

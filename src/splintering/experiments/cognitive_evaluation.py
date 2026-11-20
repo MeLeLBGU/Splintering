@@ -5,21 +5,9 @@ import pandas as pd
 import sentencepiece as spm
 from scipy.stats import pearsonr
 
-from src.TextProcessorInterface import TextProcessorInterface
-from src.logger import get_logger, initialize_logger
-from src.params import experiments, set_run_params, get_run_params
-from src.utils.path_utils import get_corpora_dir, get_raw_data_dir, get_corpus_path, get_tokenized_corpus_path, \
-    create_experiment_dirs, get_tokenizer_path
-from src.utils.utils import add_static_result_to_file
-
-
-def main():
-    for tokenizer_type in get_run_params("TOKENIZERS_TYPES"):
-        for vocab_size in get_run_params("TOKENIZERS_VOCAB_SIZES"):
-            tokenizer_path = get_tokenizer_path(tokenizer_type=tokenizer_type, vocab_size=vocab_size)
-            tokenize_cognitive_evaluation_file(tokenizer_path, tokenizer_type, vocab_size)
-            cognitive_evaluation = run_cognitive_evaluation(tokenizer_type, vocab_size)
-            add_static_result_to_file(cognitive_evaluation)
+from splintering.utils.corpus_tools import TextProcessorInterface
+from splintering.utils.logger import get_logger
+from splintering.utils.path_utils import get_corpora_dir, get_raw_data_dir, get_corpus_path, get_tokenized_corpus_path
 
 
 def save_cognitive_evaluation_corpus(text_processor: TextProcessorInterface):
@@ -110,19 +98,3 @@ def get_chunkability(category, data):
     wordiness_accuracy_correlation, _ = pearsonr(wordiness, accuracy)
     results[f'{category} chunkability accuracy'] = wordiness_accuracy_correlation
     return results
-
-
-if __name__ == '__main__':
-    task_id = 0
-    experiment = experiments[task_id]
-    experiment["TASK_ID"] = task_id
-    set_run_params(experiment)
-    create_experiment_dirs()
-    initialize_logger()
-    get_logger().info(f'Experiment started')
-    try:
-        main()
-    except Exception as e:
-        get_logger().exception(f'Experiment failed with error: \n{e}')
-        exit(1)
-    get_logger().info(f'Experiment finished')

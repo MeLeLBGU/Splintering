@@ -2,7 +2,7 @@ import json
 import re
 from collections import Counter
 
-from src.utils.path_utils import get_splinter_dir, get_logs_dir
+from splintering.utils.path_utils import get_splinter_dir, get_logs_dir
 
 
 def add_static_result_to_file(result):
