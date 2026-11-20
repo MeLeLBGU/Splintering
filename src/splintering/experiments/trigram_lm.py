@@ -1,4 +1,3 @@
-import os
 import pickle
 
 import numpy as np
@@ -7,9 +6,8 @@ from nltk.lm.preprocessing import padded_everygram_pipeline
 from sklearn.model_selection import train_test_split
 from tqdm import tqdm
 
-from src.logger import get_logger, initialize_logger
-from src.params import get_dummy_experiment, set_run_params
-from src.utils.path_utils import get_trigram_models_dir, get_corpora_tokenized_dir, get_logs_dir
+from splintering.utils.logger import get_logger, initialize_logger
+from splintering.utils.path_utils import get_trigram_models_dir, get_corpora_tokenized_dir, get_logs_dir
 
 
 def test_perplexity(corpus_name, train_model: bool):
@@ -51,12 +49,3 @@ def test_perplexity(corpus_name, train_model: bool):
     get_logger().info(f'number of inf: {inf_count}')
     get_logger().info(f'Average perplexity: {sum(perplexity_list) / len(perplexity_list)}')
     return sum(perplexity_list) / len(perplexity_list)
-
-
-if __name__ == '__main__':
-    experiment = get_dummy_experiment('2025-01-01-trigram_lm_perplexity')
-    set_run_params(experiment)
-    os.makedirs(get_logs_dir(), exist_ok=True)
-    os.makedirs(get_trigram_models_dir(), exist_ok=True)
-    initialize_logger()
-    perplexity = test_perplexity(corpus_name='hebrew_diacritized_pre_modern_unigram_10000', train_model=True)

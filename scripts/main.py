@@ -1,17 +1,14 @@
-import os
+from scripts.params import experiments, get_run_params, set_run_params
+from scripts.logger import get_logger, initialize_logger
 
-from src.CorpusTokenizer import CorpusTokenizer
-from src.SplinterTrainer import SplinterTrainer
-from src.TextProcessorBaseline import TextProcessorBaseline
-from src.TextProcessorWithEncoding import TextProcessorWithEncoding
-from src.language_utils.LanguageUtilsFactory import LanguageUtilsFactory
-from src.logger import initialize_logger, get_logger
-from src.params import experiments, get_run_params, set_run_params
-from src.save_dataset_as_text_file import save_corpus_as_text_file
-from src.static_checks import run_static_checks, run_types_length_distribution
-from src.train_tokenizer import train_tokenizer
-from src.utils.path_utils import create_experiment_dirs, get_tokenizer_path, get_corpus_path, get_tokenized_corpus_path
-from src.utils.utils import add_static_result_to_file, get_corpus_name
+from splintering.utils.corpus_tools import CorpusTokenizer
+from splintering.trainer import SplinterTrainer
+from splintering.experiments.text_processors import TextProcessorBaseline, TextProcessorWithEncoding
+from splintering.utils.languages import LanguageUtilsFactory
+from splintering.utils.static_checks import run_static_checks, run_types_length_distribution
+from scripts.train_tokenizer import train_tokenizer
+from splintering.utils.path_utils import create_experiment_dirs, get_tokenizer_path, get_corpus_path, get_tokenized_corpus_path
+from splintering.utils.misc import add_static_result_to_file, get_corpus_name
 
 
 def run():
@@ -32,7 +29,7 @@ def run():
             text_processor = TextProcessorBaseline(language_utils)
 
         # save entire corpora as text files, encoded or not
-        save_corpus_as_text_file(text_processor, train_dataset_path, train_dataset_name)
+        text_processor.save_corpus_as_text_file(train_dataset_path, train_dataset_name)
         language_utils.save_additional_corpora_for_evaluation(text_processor)
 
     # train tokenizers of different type (unigram / bpe), resulting in different vocab size
@@ -68,6 +65,7 @@ def run():
 
 
 if __name__ == '__main__':
+    import os
     slurm_array_task_id = os.getenv('SLURM_ARRAY_TASK_ID')
     task_id = (int(slurm_array_task_id) - 1) if slurm_array_task_id else 0
     experiment = experiments[task_id]

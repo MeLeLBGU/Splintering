@@ -4,18 +4,18 @@ import os
 import numpy as np
 from datasets import load_dataset
 
-from src.CorpusWordsExtractor import CorpusWordsExtractor
-from src.language_utils.LanguageUtilsInterface import LanguageUtilsInterface
-from src.logger import get_logger
-from src.utils.path_utils import get_logs_dir, get_raw_data_dir, get_splinter_dir, get_words_dict_dir
-from src.utils.utils import get_words_dict_by_length, get_permutation, get_corpus_name
+from splintering.utils.corpus_tools import CorpusWordsExtractor
+from splintering.utils.languages import LanguageUtilsInterface
+from splintering.utils.logger import get_logger
+from splintering.utils.path_utils import get_logs_dir, get_raw_data_dir, get_splinter_dir, get_words_dict_dir
+from splintering.utils.misc import get_words_dict_by_length, get_permutation, get_corpus_name
 
 
 class SplinterTrainer:
     def __init__(self, language_utils: LanguageUtilsInterface):
         self.language_utils = language_utils
 
-    def train(self, dataset_path: str, dataset_name: str, letters_for_reductions: [str] = None):
+    def train(self, dataset_path: str, dataset_name: str, letters_for_reductions: list[str] = None):
         words_dict = self.get_word_dict(dataset_path, dataset_name)
         pre_process_words_dict = self.pre_process_words(words_dict)
         words_dict_by_length = get_words_dict_by_length(pre_process_words_dict)

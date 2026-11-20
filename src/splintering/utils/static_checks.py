@@ -7,8 +7,8 @@ import sentencepiece as spm
 import tokenization_scorer
 from tqdm import tqdm
 
-from src.logger import get_logger
-from src.utils.path_utils import get_tokenizer_path
+from splintering.utils.logger import get_logger
+from splintering.utils.path_utils import get_tokenizer_path
 
 
 # ------------------------------------------------------------------------
