@@ -4,7 +4,7 @@ from scripts.logger import get_logger, initialize_logger
 import os
 import sentencepiece as spm
 
-from splintering.experiments.text_processors import TextProcessorForDemo
+from splintering.text_processors import TextProcessorForDemo
 from splintering.utils.languages import LanguageUtilsFactory
 from splintering.utils.languages import LanguageUtilsInterface
 from splintering.utils.path_utils import get_logs_dir, get_tokenizers_dir

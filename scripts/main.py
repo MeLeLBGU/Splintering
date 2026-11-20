@@ -3,7 +3,7 @@ from scripts.logger import get_logger, initialize_logger
 
 from splintering.utils.corpus_tools import CorpusTokenizer
 from splintering.trainer import SplinterTrainer
-from splintering.experiments.text_processors import TextProcessorBaseline, TextProcessorWithEncoding
+from splintering.text_processors import TextProcessorBaseline, TextProcessorWithEncoding
 from splintering.utils.languages import LanguageUtilsFactory
 from splintering.utils.static_checks import run_static_checks, run_types_length_distribution
 from scripts.train_tokenizer import train_tokenizer
