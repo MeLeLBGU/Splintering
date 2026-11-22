@@ -1,13 +1,8 @@
-import os
-
-from src.language_utils.LanguageUtilsInterface import LanguageUtilsInterface
-from src.params import set_run_params, get_all_letters_template
-from src.language_utils.HebrewUtils import HebrewUtils
-from src.utils.path_utils import get_logs_dir
-from src.utils.utils import get_new_unicode_chars_map_from_file
+from splintering.utils.languages import LanguageUtilsInterface
+from splintering.utils.misc import get_new_unicode_chars_map_from_file
 
 
-def compare_vocabs(baseline_vocab: [str], splinter_decoded_vocab: [str]):
+def compare_vocabs(baseline_vocab: list[str], splinter_decoded_vocab: list[str]):
     baseline_vocab_set = set(baseline_vocab)
     decoded_vocab = [line.split("\t\t") for line in splinter_decoded_vocab]
     possible_full_vocab = [line[0] for line in decoded_vocab if len(line) == 2 and line[0] != line[1]]  # BERT differ
@@ -80,27 +75,3 @@ def get_dicta_bert_tokens(language_utils: LanguageUtilsInterface):
     splinter_decoded_vocab = decode_dicta_bert_splintered_vocab(splinter_vocab, language_utils)
 
     return baseline_vocab, splinter_decoded_vocab
-
-
-def main():
-    experiment = get_all_letters_template()
-    experiment['EXPERIMENT_NAME'] = '2025-01-06-compare_vocabs_dicta_bert'  # all letters
-    experiment["TASK_ID"] = '1000000'
-    experiment['TOKENIZERS_VOCAB_SIZES'] = [128000, 64000, 32000, 10000, 2000, 1000, 800]
-    set_run_params(experiment)
-    os.makedirs(get_logs_dir(), exist_ok=True)
-
-    language_utils = HebrewUtils()
-    output_path = f'{get_logs_dir()}/vocabs_comparison.txt'
-    baseline_vocab, splinter_decoded_vocab = get_dicta_bert_tokens(language_utils)
-
-    with open(f'{get_logs_dir()}/SplinterDictaBert - Vocab - decoded.txt', 'w', encoding='utf-8') as file:
-        file.write("\n".join(splinter_decoded_vocab))
-
-    results = compare_vocabs(baseline_vocab, splinter_decoded_vocab)
-    with open(output_path, 'a') as file:
-        file.write("\n".join(results))
-
-
-if __name__ == '__main__':
-    main()

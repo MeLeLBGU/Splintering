@@ -1,7 +1,7 @@
 import os
 import shutil
 
-from src.params import get_run_params
+from scripts.params import get_run_params
 
 
 def get_raw_data_dir():
