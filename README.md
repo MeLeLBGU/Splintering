@@ -1,5 +1,5 @@
 # Splintering
-This repository contains the code used in [Splintering Nonconcatenative Languages for Better Tokenization](https://arxiv.org/abs/2503.14433). 
+This repository contains the code used in [Splintering Nonconcatenative Languages for Better Tokenization](https://aclanthology.org/2025.findings-acl.1151/). 
 
 It contains the Splinter algorithm as well as the intrinsic evaluation code.
 
@@ -45,13 +45,24 @@ train_tokenizer(tokenizer_type=tokenizer_type, vocab_size=vocab_size, input_path
 If you use Splinter in your research, please cite ```Splintering Nonconcatenative Languages for Better Tokenization```:
 
 ```
-@misc{gazit2025splinteringnonconcatenativelanguagesbetter,
-      title={Splintering Nonconcatenative Languages for Better Tokenization}, 
-      author={Bar Gazit and Shaltiel Shmidman and Avi Shmidman and Yuval Pinter},
-      year={2025},
-      eprint={2503.14433},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL},
-      url={https://arxiv.org/abs/2503.14433}, 
+@inproceedings{gazit-etal-2025-splintering,
+    title = "Splintering Nonconcatenative Languages for Better Tokenization",
+    author = "Gazit, Bar  and
+      Shmidman, Shaltiel  and
+      Shmidman, Avi  and
+      Pinter, Yuval",
+    editor = "Che, Wanxiang  and
+      Nabende, Joyce  and
+      Shutova, Ekaterina  and
+      Pilehvar, Mohammad Taher",
+    booktitle = "Findings of the {A}ssociation for {C}omputational {L}inguistics: {ACL} 2025",
+    month = jul,
+    year = "2025",
+    address = "Vienna, Austria",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2025.findings-acl.1151/",
+    doi = "10.18653/v1/2025.findings-acl.1151",
+    pages = "22405--22417",
+    ISBN = "979-8-89176-256-5"
 }
 ```
