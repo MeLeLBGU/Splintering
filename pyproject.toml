@@ -7,6 +7,7 @@ authors = [
     {name = "Bar Gazit",         email = "bargazi@post.bgu.ac.il"},
     {name = "Shaltiel Shmidman", email = "shaltieltzion@gmail.com"},
     {name = "Avi Shmidman",      email = "avi.shmidman@biu.ac.il"},
+    {name = "Yuval Pinter",      email = "uvp@cs.bgu.ac.il"},
 ]
 description = "Splinter is a text pre-processing step which rearranges characters into a linear form that better represents nonconcatenative morphologies, enabling meaningful contiguous segments to be found by a subword tokenizer."
 classifiers = [
