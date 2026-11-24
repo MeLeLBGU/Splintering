@@ -8,6 +8,8 @@ The downstream evaluation DictaBERT-Splinter models can be found [here](https://
 The following example trains Splinter on Hebrew Wikipedia, encodes the training corpus, and uses it to train a BPE tokenizer:
 
 ```python
+!pip install splintering -q
+
 # Training:
 from splintering.trainer import SplinterTrainer
 from splintering.text_processors import TextProcessorWithEncoding
@@ -30,7 +32,7 @@ reductions_map, new_unicode_chars_map, _ = splinter_trainer.train(train_dataset_
 # Application:
 # - Splinter the corpus
 text_processor = TextProcessorWithEncoding(language_utils, reductions_map, new_unicode_chars_map)
-text_processor.save_corpus_as_text_file(train_dataset_path, train_dataset_name)
+text_processor.save_corpus_as_text_file(folder, train_dataset_path, train_dataset_name)
 
 # - Train tokenizer on the splintered corpus 
 tokenizer_corpus_path = folder.get_corpus_path(get_corpus_name(train_dataset_path, train_dataset_name))
