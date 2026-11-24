@@ -6,12 +6,12 @@ from nltk.lm.preprocessing import padded_everygram_pipeline
 from sklearn.model_selection import train_test_split
 from tqdm import tqdm
 
-from splintering.utils.logger import get_logger, initialize_logger
-from splintering.utils.path_utils import get_trigram_models_dir, get_corpora_tokenized_dir, get_logs_dir
+from splintering.utils.logger import get_logger
+from splintering.utils.path_utils import SplinterPaths
 
 
-def test_perplexity(corpus_name, train_model: bool):
-    tokenized_corpus_path = f'{get_corpora_tokenized_dir()}/{corpus_name}.txt'
+def test_perplexity(home: SplinterPaths, corpus_name, train_model: bool):
+    tokenized_corpus_path = home.get_corpora_tokenized_dir() / f"{corpus_name}.txt"
     with open(tokenized_corpus_path, 'r', encoding='utf-8') as file:
         tokenized_text = file.read().split('\n')
     train_data, test_data = train_test_split(tokenized_text, test_size=0.1, random_state=42)
@@ -23,11 +23,11 @@ def test_perplexity(corpus_name, train_model: bool):
         model = KneserNeyInterpolated(order=n)
         get_logger().info(f"Start model fit for corpus '{corpus_name}'")
         model.fit(train_data, padded_vocab)
-        with open(f'{get_trigram_models_dir()}/trigram_model_{corpus_name}.pkl', 'wb') as file:
+        with open(home.get_trigram_models_dir() / f"trigram_model_{corpus_name}.pkl", 'wb') as file:
             pickle.dump(model, file)
     else:
         get_logger().info(f"Start model load for corpus '{corpus_name}'")
-        with open(f'{get_trigram_models_dir()}/trigram_model_{corpus_name}.pkl', 'rb') as file:
+        with open(home.get_trigram_models_dir() / f"trigram_model_{corpus_name}.pkl", 'rb') as file:
             model = pickle.load(file)
 
     test_data = [data.split(' ') for data in test_data]
@@ -37,7 +37,7 @@ def test_perplexity(corpus_name, train_model: bool):
     perplexity_list = list()
     get_logger().info(f"Start perplexity calculations for {len(test_data)} sentences in '{corpus_name}'.")
     inf_count = 0
-    with open(f'{get_logs_dir()}/trigram_model_{corpus_name}_perplexity.txt', 'a', encoding='utf-8') as file:
+    with open(home.get_logs_dir() / f"trigram_model_{corpus_name}_perplexity.txt", 'a', encoding='utf-8') as file:
         for sentence in tqdm(test_data):
             sentence_perplexity = model.perplexity(sentence)
             file.write(f'{sentence_perplexity}\n')

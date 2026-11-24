@@ -1,90 +1,88 @@
+from typing import Optional
+from pathlib import Path
+from dataclasses import dataclass
+
+from langcodes import Language
 import copy
-from datetime import datetime, timezone
+
+from splintering.utils.path_utils import SplinterPaths
 
 
-run_params = {}  # value is filled by set_run_params in main
-
-def set_run_params(params):
-    global run_params
-    run_params = params
-    run_params["TIMESTAMP"] = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
+PATH_DATA = Path(__file__).resolve().parent.parent / "data"
 
 
-def get_run_params(key):
-    global run_params
-    return run_params[key]
+@dataclass
+class SplinterExperiment:
+    PATHS: SplinterPaths
+
+    RUN_STATIC_CHECKS: bool
+    STATIC_CHECKS_CORPORA: list[str]
+    TOKENIZE_CORPORA: bool
+
+    LANGUAGE: Language
+    SPLINTER_TRAINING_CORPUS_PATH: str
+    SPLINTER_TRAINING_CORPUS_NAME: str
+    SPLINTER_LETTERS_SUBSET: Optional[list[str]]
+    SAVE_CORPORA_INTO_FILE: bool
+    IS_ENCODED: bool
+
+    TRAIN_TOKENIZERS: bool
+    TOKENIZERS_TYPES: list[str]
+    TOKENIZERS_VOCAB_SIZES: list[int]
 
 
-def get_all_run_params():
-    global run_params
-    return run_params
+def get_experiment_default(lang: Language, paths: SplinterPaths) -> SplinterExperiment:
+    return SplinterExperiment(
+        PATHS=paths,
+        RUN_STATIC_CHECKS=True,
+        STATIC_CHECKS_CORPORA=['hebrew_diacritized_pre_modern', 'HeNLP_HeDC4'] if lang.to_tag() == "he" else [f'wikimedia_wikipedia_20231101_{lang.to_tag()}'],
 
-LANGUAGE = 'he'
-LANGUAGE_FULL = 'hebrew'
-EXPERIMENT_DATE = '2025-01-21'
+        TOKENIZE_CORPORA=False,
+        LANGUAGE=lang,
+        SPLINTER_TRAINING_CORPUS_PATH='wikimedia/wikipedia',
+        SPLINTER_TRAINING_CORPUS_NAME=f'20231101.{lang.to_tag()}',
+        SPLINTER_LETTERS_SUBSET=None,
+        SAVE_CORPORA_INTO_FILE=False,
+        IS_ENCODED=True,
 
-if LANGUAGE == 'he':
-    STATIC_CHECKS_CORPORA = ['hebrew_diacritized_pre_modern', 'HeNLP_HeDC4']
-else:
-    STATIC_CHECKS_CORPORA = [f'wikimedia_wikipedia_20231101_{LANGUAGE}']
-
-experiment_template = {
-        'LANGUAGE': LANGUAGE,
-        'SAVE_CORPORA_INTO_FILE': False,
-        'SPLINTER_TRAINING_CORPUS_PATH': 'wikimedia/wikipedia',
-        'SPLINTER_TRAINING_CORPUS_NAME': f'20231101.{LANGUAGE}',
-        'TRAIN_TOKENIZERS': False,
-        'TOKENIZERS_TYPES': ['unigram', 'bpe'],
-        'TOKENIZE_CORPORA': False,
-        'RUN_STATIC_CHECKS': True,
-        'STATIC_CHECKS_CORPORA': STATIC_CHECKS_CORPORA,
-    }
+        TRAIN_TOKENIZERS=False,
+        TOKENIZERS_TYPES=['unigram', 'bpe'],
+        TOKENIZERS_VOCAB_SIZES=[128_000]
+    )
 
 
-def get_all_letters_template():
-    all_letters_template = copy.deepcopy(experiment_template)
-    all_letters_template['EXPERIMENT_NAME'] = f'{EXPERIMENT_DATE}-{LANGUAGE_FULL}-all_letters'  # all letters
-    all_letters_template['IS_ENCODED'] = True
-    all_letters_template['SPLINTER_LETTERS_SUBSET'] = None  # None = all letters
-    return all_letters_template
+def get_dummy_experiment(lang: Language, experiment_name: str) -> SplinterExperiment:
+    return get_experiment_default(lang, SplinterPaths(experiment_name, '1000000', base_directory=PATH_DATA))
 
 
-def get_letters_subset_template():
-    letters_subset_template = copy.deepcopy(experiment_template)
-    letters_subset_template['EXPERIMENT_NAME'] = f'{EXPERIMENT_DATE}-{LANGUAGE_FULL}-letters_subset'  # letters subset
-    letters_subset_template['IS_ENCODED'] = True
-    letters_subset_template['SPLINTER_LETTERS_SUBSET'] = ["א", "ב", "ה", "ו", "י", "כ", "ל", "מ", "נ", "ש", "ת"]
-    return letters_subset_template
-
-
-def get_baseline_template():
-    baseline_template = copy.deepcopy(experiment_template)
-    baseline_template['EXPERIMENT_NAME'] = f'{EXPERIMENT_DATE}-{LANGUAGE_FULL}-baseline'  # baseline
-    baseline_template['IS_ENCODED'] = False  # False = baseline experiment
-    baseline_template['SPLINTER_LETTERS_SUBSET'] = None
+def create_experiment_baseline(lang: Language, paths: SplinterPaths) -> SplinterExperiment:
+    baseline_template = get_experiment_default(lang, paths)
+    baseline_template.EXPERIMENT_NAME = f'{lang.language_name()}-baseline'  # baseline
+    baseline_template.IS_ENCODED = False  # False = baseline experiment
+    baseline_template.SPLINTER_LETTERS_SUBSET = None
     return baseline_template
 
 
-def split_to_separate_runs(template):
+def create_experiment_allletters(lang: Language, paths: SplinterPaths) -> SplinterExperiment:
+    all_letters_template = get_experiment_default(lang, paths)
+    all_letters_template.EXPERIMENT_NAME = f'{lang.language_name()}-all_letters'  # all letters
+    all_letters_template.IS_ENCODED = True
+    all_letters_template.SPLINTER_LETTERS_SUBSET = None  # None = all letters
+    return all_letters_template
+
+
+def create_experiment_someletters(lang: Language, paths: SplinterPaths) -> SplinterExperiment:
+    letters_subset_template = get_experiment_default(lang, paths)
+    letters_subset_template.EXPERIMENT_NAME = f'{lang.language_name()}-letters_subset'  # letters subset
+    letters_subset_template.IS_ENCODED = True
+    letters_subset_template.SPLINTER_LETTERS_SUBSET = ["א", "ב", "ה", "ו", "י", "כ", "ל", "מ", "נ", "ש", "ת"]
+    return letters_subset_template
+
+
+def split_to_separate_runs(template: SplinterExperiment) -> list[SplinterExperiment]:
     runs = []
-    vocab_sizes = [128000, 64000, 32000, 10000, 2000, 1000, 800]
-    for vocab_size in vocab_sizes:
+    for vocab_size in template.TOKENIZERS_VOCAB_SIZES:
         run = copy.deepcopy(template)
-        run['TOKENIZERS_VOCAB_SIZES'] = [vocab_size]
+        run.TOKENIZERS_VOCAB_SIZES = [vocab_size]
         runs.append(run)
     return runs
-
-
-def get_dummy_experiment(experiment_name: str):
-    experiment = copy.deepcopy(get_baseline_template())
-    experiment['EXPERIMENT_NAME'] = experiment_name
-    experiment["TASK_ID"] = '1000000'
-    experiment['TOKENIZERS_VOCAB_SIZES'] = [128000]
-    return experiment
-
-
-experiments = []
-experiments.extend(split_to_separate_runs(get_all_letters_template()))
-if LANGUAGE == 'he':
-    experiments.extend(split_to_separate_runs(get_letters_subset_template()))
-experiments.extend(split_to_separate_runs(get_baseline_template()))

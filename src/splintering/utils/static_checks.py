@@ -8,7 +8,7 @@ import tokenization_scorer
 from tqdm import tqdm
 
 from splintering.utils.logger import get_logger
-from splintering.utils.path_utils import get_tokenizer_path
+from splintering.utils.path_utils import SplinterPaths
 
 
 # ------------------------------------------------------------------------
@@ -137,22 +137,22 @@ def merge_keys_above_ten(distribution):
     return clean_distribution
 
 
-def run_types_length_distribution(tokenizer_type, vocab_size):
+def run_types_length_distribution(home: SplinterPaths, tokenizer_type, vocab_size):
     get_logger().info('types_length_distribution - START')
-    tokens = get_vocab_tokens(tokenizer_type, vocab_size)
+    tokens = get_vocab_tokens(home, tokenizer_type, vocab_size)
     token_lengths = [get_token_length(token) for token in tokens]
     distribution = dict(sorted(Counter(token_lengths).items()))
     get_logger().info('types_length_distribution - END')
     get_logger().info(f'Types length distribution: {distribution}')
 
     return {
-        'vocab': get_tokenizer_path(tokenizer_type=tokenizer_type, vocab_size=vocab_size),
+        'vocab': home.get_tokenizer_path(tokenizer_type=tokenizer_type, vocab_size=vocab_size),
         'types_length_distribution': distribution
     }
 
 
-def get_vocab_tokens(tokenizer_type, vocab_size):
-    vocab_path = get_tokenizer_path(tokenizer_type=tokenizer_type, vocab_size=vocab_size)
+def get_vocab_tokens(home: SplinterPaths, tokenizer_type, vocab_size):
+    vocab_path = home.get_tokenizer_path(tokenizer_type=tokenizer_type, vocab_size=vocab_size)
     with open(f'{vocab_path}.vocab', 'r', encoding='utf-8') as file:
         tokens = [token.split('\t')[0] for token in tqdm(file)]
     return tokens

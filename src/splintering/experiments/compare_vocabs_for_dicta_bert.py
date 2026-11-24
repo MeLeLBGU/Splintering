@@ -1,5 +1,5 @@
 from splintering.utils.languages import LanguageUtilsInterface
-from splintering.utils.misc import get_new_unicode_chars_map_from_file
+from splintering.utils.misc import get_new_unicode_chars_map_from_file, SplinterPaths
 
 
 def compare_vocabs(baseline_vocab: list[str], splinter_decoded_vocab: list[str]):
@@ -18,8 +18,8 @@ def compare_vocabs(baseline_vocab: list[str], splinter_decoded_vocab: list[str])
     ]
 
 
-def decode_dicta_bert_splintered_vocab(encoded_text, language_utils: LanguageUtilsInterface):
-    new_unicode_chars_map = get_new_unicode_chars_map_from_file()
+def decode_dicta_bert_splintered_vocab(home: SplinterPaths, encoded_text, language_utils: LanguageUtilsInterface):
+    new_unicode_chars_map = get_new_unicode_chars_map_from_file(home)
     new_unicode_chars_inverted_map = {value: key for key, value in new_unicode_chars_map.items()}
     decoded_tokens = list()
     i = 0
@@ -64,7 +64,7 @@ def decoded_token_to_str(decoded_token):
     return "[" + ",".join([f"'{reduction}'" for reduction in decoded_token]) + "]"
 
 
-def get_dicta_bert_tokens(language_utils: LanguageUtilsInterface):
+def get_dicta_bert_tokens(home: SplinterPaths, language_utils: LanguageUtilsInterface):
     baseline_vocab_file = "./experiments/2025-01-06-compare_vocabs_dicta_bert/DictaBert - Vocab.txt"
     with open(baseline_vocab_file, 'r', encoding='utf-8') as file:
         baseline_vocab = file.read().splitlines()
@@ -72,6 +72,6 @@ def get_dicta_bert_tokens(language_utils: LanguageUtilsInterface):
     splinter_vocab_file = "./experiments/2025-01-06-compare_vocabs_dicta_bert/SplinterDictaBert - Vocab.txt"
     with open(splinter_vocab_file, 'r', encoding='utf-8') as file:
         splinter_vocab = [line.rstrip("\n") for line in file]
-    splinter_decoded_vocab = decode_dicta_bert_splintered_vocab(splinter_vocab, language_utils)
+    splinter_decoded_vocab = decode_dicta_bert_splintered_vocab(home, splinter_vocab, language_utils)
 
     return baseline_vocab, splinter_decoded_vocab

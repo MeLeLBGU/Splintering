@@ -1,13 +1,13 @@
 import logging
 
-from splintering.utils.path_utils import get_logs_dir
+from splintering.utils.path_utils import SplinterPaths
 
 logger = None
 
-def initialize_logger():
+def initialize_logger(home: SplinterPaths):
     global logger
     logging.basicConfig(
-        filename=f'{get_logs_dir()}/log.log',
+        filename=home.get_logs_dir() / "log.log",
         level=logging.INFO,
         format="%(asctime)s - %(levelname)s - %(message)s"
     )

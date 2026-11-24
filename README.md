@@ -11,17 +11,18 @@ The following example trains Splinter on Hebrew Wikipedia, encodes the training 
 # Training:
 from splintering.trainer import SplinterTrainer
 from splintering.text_processors import TextProcessorWithEncoding
-from splintering.utils.languages import LanguageUtilsFactory
-from splintering.utils.path_utils import get_tokenizer_path, get_corpus_path
+from splintering.utils.languages import LanguageUtilsFactory, Language
+from splintering.utils.path_utils import SplinterPaths
 from splintering.utils.misc import get_corpus_name
 
-language = 'he'
+folder = SplinterPaths("example")
+language = Language.find("Hebrew")
 train_dataset_path = 'wikimedia/wikipedia'
 train_dataset_name = f'20231101.{language}'
 language_utils = LanguageUtilsFactory.get_by_language(language)
 
 # - Create the reductions map, and map the reductions in it into new Unicode characters
-splinter_trainer = SplinterTrainer(language_utils)
+splinter_trainer = SplinterTrainer(language_utils, folder)
 reductions_map, new_unicode_chars_map, _ = splinter_trainer.train(train_dataset_path, train_dataset_name, None)
 
 # Application:
@@ -30,14 +31,13 @@ text_processor = TextProcessorWithEncoding(language_utils, reductions_map, new_u
 text_processor.save_corpus_as_text_file(train_dataset_path, train_dataset_name)
 
 # - Train tokenizer on the splintered corpus 
-tokenizer_corpus_path = get_corpus_path(get_corpus_name(train_dataset_path, train_dataset_name))
+tokenizer_corpus_path = folder.get_corpus_path(get_corpus_name(train_dataset_path, train_dataset_name))
 tokenizer_type = 'bpe'
 vocab_size = 128_000
 
 from scripts.train_tokenizer import train_tokenizer  # Thin wrapper around SentencePiece; you can use any package that takes a string corpus.
-tokenizer_path = get_tokenizer_path(tokenizer_type=tokenizer_type, vocab_size=vocab_size)
-train_tokenizer(tokenizer_type=tokenizer_type, vocab_size=vocab_size, input_path=tokenizer_corpus_path,
-                output_path=tokenizer_path)                     
+tokenizer_path = folder.get_tokenizer_path(tokenizer_type=tokenizer_type, vocab_size=vocab_size)
+train_tokenizer(folder, tokenizer_type=tokenizer_type, vocab_size=vocab_size, input_path=tokenizer_corpus_path, output_path=tokenizer_path)
 ```
 
 ## Citation

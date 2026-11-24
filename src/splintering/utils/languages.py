@@ -1,9 +1,13 @@
+from __future__ import annotations  # To support TYPE_CHECKING
+from typing import TYPE_CHECKING
 from abc import ABC, abstractmethod
 
+from langcodes import Language
 import re
 
-from splintering.experiments.cognitive_evaluation import save_cognitive_evaluation_corpus
-from splintering.utils.corpus_tools import TextProcessorInterface
+from splintering.utils.path_utils import SplinterPaths
+if TYPE_CHECKING:
+    from splintering.utils.corpus_tools import TextProcessorInterface
 
 
 class LanguageUtilsInterface(ABC):
@@ -29,7 +33,7 @@ class LanguageUtilsInterface(ABC):
         pass
 
     @abstractmethod
-    def save_additional_corpora_for_evaluation(self, text_processor: TextProcessorInterface) -> None:
+    def save_additional_corpora_for_evaluation(self, home: SplinterPaths, text_processor: TextProcessorInterface) -> None:
         pass
 
     @staticmethod
@@ -58,7 +62,7 @@ class ArabicUtils(LanguageUtilsInterface):
     def replace_final_letters(self, text: str) -> str:
         return text
 
-    def save_additional_corpora_for_evaluation(self, text_processor) -> None:
+    def save_additional_corpora_for_evaluation(self, home, text_processor) -> None:
         pass
 
 
@@ -101,10 +105,11 @@ class HebrewUtils(LanguageUtilsInterface):
         else:
             return text
 
-    def save_additional_corpora_for_evaluation(self, text_processor: TextProcessorInterface) -> None:
-        text_processor.save_hedc4_corpus()
-        text_processor.save_pre_modern_corpus()
-        save_cognitive_evaluation_corpus(text_processor=text_processor)
+    def save_additional_corpora_for_evaluation(self, home: SplinterPaths, text_processor: TextProcessorInterface) -> None:
+        from splintering.experiments.cognitive_evaluation import save_cognitive_evaluation_corpus
+        text_processor.save_hedc4_corpus(home)
+        text_processor.save_pre_modern_corpus(home)
+        save_cognitive_evaluation_corpus(home, text_processor=text_processor)
 
 
 class MalayUtils(LanguageUtilsInterface):
@@ -123,7 +128,7 @@ class MalayUtils(LanguageUtilsInterface):
     def replace_final_letters(self, text: str) -> str:
         return text
 
-    def save_additional_corpora_for_evaluation(self, text_processor) -> None:
+    def save_additional_corpora_for_evaluation(self, home, text_processor) -> None:
         pass
 
 
@@ -132,10 +137,10 @@ class MalayUtils(LanguageUtilsInterface):
 
 class LanguageUtilsFactory:
     @staticmethod
-    def get_by_language(language: str) -> LanguageUtilsInterface:
+    def get_by_language(language: Language) -> LanguageUtilsInterface:
         switch = {
             'he': HebrewUtils(),
             'ar': ArabicUtils(),
             'ms': MalayUtils(),
         }
-        return switch.get(language)
+        return switch.get(language.to_tag())

@@ -1,7 +1,7 @@
 import os
 
 from splintering.utils.languages import LanguageUtilsInterface
-from splintering.utils.misc import get_new_unicode_chars_map_from_file
+from splintering.utils.misc import get_new_unicode_chars_map_from_file, SplinterPaths
 
 
 def compare_vocabs(baseline_vocab: list[str], splinter_decoded_vocab: list[str]):
@@ -20,8 +20,8 @@ def compare_vocabs(baseline_vocab: list[str], splinter_decoded_vocab: list[str])
     ]
 
 
-def decode_splintered_vocab(encoded_text, language_utils: LanguageUtilsInterface):
-    new_unicode_chars_map = get_new_unicode_chars_map_from_file()
+def decode_splintered_vocab(home: SplinterPaths, encoded_text, language_utils: LanguageUtilsInterface):
+    new_unicode_chars_map = get_new_unicode_chars_map_from_file(home)
     new_unicode_chars_inverted_map = {value: key for key, value in new_unicode_chars_map.items()}
     decoded_tokens = list()
     for encoded_token in encoded_text:
