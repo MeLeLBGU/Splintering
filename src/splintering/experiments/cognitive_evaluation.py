@@ -1,5 +1,4 @@
 import json
-import os
 
 import pandas as pd
 import sentencepiece as spm
@@ -7,12 +6,12 @@ from scipy.stats import pearsonr
 
 from splintering.utils.corpus_tools import TextProcessorInterface
 from splintering.utils.logger import get_logger
-from splintering.utils.path_utils import get_corpora_dir, get_raw_data_dir, get_corpus_path, get_tokenized_corpus_path
+from splintering.utils.paths import SplinterPaths
 
 
-def save_cognitive_evaluation_corpus(text_processor: TextProcessorInterface):
+def save_cognitive_evaluation_corpus(home: SplinterPaths, text_processor: TextProcessorInterface):
     get_logger().info(f'Start saving HeLP_The_Hebrew_Lexicon_Project corpus as text file with {text_processor.__class__.__name__}')
-    data = pd.read_excel(f'{get_raw_data_dir()}/HeLP_The_Hebrew_Lexicon_Project/raw_LD_data.xlsx')
+    data = pd.read_excel(home.get_raw_data_dir() / "HeLP_The_Hebrew_Lexicon_Project" / "raw_LD_data.xlsx")
     filtered_data = filter_data(data)  # do the same filtering as in the original HeLP paper
 
     aggregated_by_stimuli = filtered_data.groupby("Stimulus", as_index=False).agg(
@@ -24,7 +23,7 @@ def save_cognitive_evaluation_corpus(text_processor: TextProcessorInterface):
     )
 
     aggregated_by_stimuli["Stimulus"] = [text_processor.process(stimulus) for stimulus in aggregated_by_stimuli["Stimulus"]]
-    aggregated_by_stimuli.to_csv(f'{get_corpora_dir()}/HeLP_cognitive_evaluation.txt', index=False)
+    aggregated_by_stimuli.to_csv(home.get_corpora_dir() / "HeLP_cognitive_evaluation.txt", index=False)
     get_logger().info(f'Finished saving HeLP_The_Hebrew_Lexicon_Project corpus')
 
 
@@ -51,11 +50,11 @@ def filter_data(data):
     return filtered_data
 
 
-def tokenize_cognitive_evaluation_file(tokenizer_path, tokenizer_type, vocab_size):
-    corpus_path = get_corpus_path('HeLP_cognitive_evaluation')
-    tokenized_corpus_path = get_tokenized_corpus_path('HeLP_cognitive_evaluation', tokenizer_type, vocab_size)
-    if os.path.exists(tokenized_corpus_path):
-        os.remove(tokenized_corpus_path)
+def tokenize_cognitive_evaluation_file(home: SplinterPaths, tokenizer_path, tokenizer_type, vocab_size):
+    corpus_path = home.get_corpus_path("HeLP_cognitive_evaluation")
+    tokenized_corpus_path = home.get_tokenized_corpus_path("HeLP_cognitive_evaluation", tokenizer_type, vocab_size)
+    if tokenized_corpus_path.exists():
+        tokenized_corpus_path.unlink()
 
     get_logger().info(f'cognitive_evaluation: start tokenizing corpus with {tokenizer_type} tokenizer, vocab size {vocab_size}.')
     sp_tokenizer = spm.SentencePieceProcessor(model_file=f'{tokenizer_path}.model')
@@ -66,8 +65,8 @@ def tokenize_cognitive_evaluation_file(tokenizer_path, tokenizer_type, vocab_siz
     get_logger().info('cognitive_evaluation: finished tokenizing corpus')
 
 
-def run_cognitive_evaluation(tokenizer_type, vocab_size):
-    tokenized_corpus_path = get_tokenized_corpus_path('HeLP_cognitive_evaluation', tokenizer_type, vocab_size)
+def run_cognitive_evaluation(home: SplinterPaths, tokenizer_type, vocab_size):
+    tokenized_corpus_path = home.get_tokenized_corpus_path('HeLP_cognitive_evaluation', tokenizer_type, vocab_size)
     data = pd.read_csv(tokenized_corpus_path)
     data = data.dropna()
     data["wordiness"] = data.apply(get_wordiness, axis=1)

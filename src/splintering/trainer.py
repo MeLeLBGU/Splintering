@@ -1,19 +1,18 @@
 import json
-import os
-
 import numpy as np
 from datasets import load_dataset
 
 from splintering.utils.corpus_tools import CorpusWordsExtractor
 from splintering.utils.languages import LanguageUtilsInterface
 from splintering.utils.logger import get_logger
-from splintering.utils.path_utils import get_logs_dir, get_raw_data_dir, get_splinter_dir, get_words_dict_dir
+from splintering.utils.paths import SplinterPaths
 from splintering.utils.misc import get_words_dict_by_length, get_permutation, get_corpus_name
 
 
 class SplinterTrainer:
-    def __init__(self, language_utils: LanguageUtilsInterface):
-        self.language_utils = language_utils
+    def __init__(self, language_utils: LanguageUtilsInterface, home: SplinterPaths):
+        self._language_utils = language_utils
+        self._home = home
 
     def train(self, dataset_path: str, dataset_name: str, letters_for_reductions: list[str] = None):
         words_dict = self.get_word_dict(dataset_path, dataset_name)
@@ -37,7 +36,7 @@ class SplinterTrainer:
             reductions[word_length] = self.normalize_values(self.sort_dictionary(reductions[word_length]))
             get_logger().info(f"Finished reductions for word length {word_length}")
     
-        with open(f'{get_logs_dir()}/reductions_map_first_iteration.json', 'w') as file:
+        with open(self._home.get_logs_dir() / "reductions_map_first_iteration.json", 'w') as file:
             json.dump(reductions, file, indent='\t')
     
         get_logger().info(f"Start updating reductions:")
@@ -58,7 +57,7 @@ class SplinterTrainer:
                 del updated_reductions[word_length]
             get_logger().info(f"Finished updating reductions for word length {word_length}")
     
-        with open(f'{get_logs_dir()}/reductions_map_with_frequencies.json', 'w') as file:
+        with open(self._home.get_logs_dir() / 'reductions_map_with_frequencies.json', 'w') as file:
             json.dump(updated_reductions, file, indent='\t')
     
         self.save_result_file("reductions_map", updated_reductions)
@@ -70,13 +69,13 @@ class SplinterTrainer:
     
     def get_word_dict(self, dataset_path, dataset_name):
         corpus_name = get_corpus_name(dataset_path, dataset_name)
-        if not os.path.exists(f'{get_words_dict_dir()}/{corpus_name}.json'):
+        if not (self._home.get_words_dict_dir() / f'{corpus_name}.json').exists():
             get_logger().info(f'word dict file was not found - creating it from corpus')
-            corpus = load_dataset(dataset_path, dataset_name, split="train", cache_dir=get_raw_data_dir())
-            corpus_word_extractor = CorpusWordsExtractor(self.language_utils)
-            corpus_word_extractor.convert_corpus_to_words_dict_file(corpus, corpus_name)
+            corpus = load_dataset(dataset_path, dataset_name, split="train", cache_dir=self._home.get_raw_data_dir().as_posix())
+            corpus_word_extractor = CorpusWordsExtractor(self._language_utils)
+            corpus_word_extractor.convert_corpus_to_words_dict_file(self._home, corpus, corpus_name)
     
-        with open(f'{get_words_dict_dir()}/{corpus_name}.json', 'r') as file:
+        with open(self._home.get_words_dict_dir() / f'{corpus_name}.json', 'r') as file:
             words_dict = json.load(file)
         return words_dict
 
@@ -84,13 +83,13 @@ class SplinterTrainer:
         # Remove words that appeared less than 10 times in the entire corpus
         words = {k: int(v) for k, v in word_counters.items() if int(v) >= 10}
 
-        words = {self.language_utils.replace_final_letters(k): v for k, v in words.items()}
+        words = {self._language_utils.replace_final_letters(k): v for k, v in words.items()}
 
         # Remove empty words and single characters words
         words = {k: int(v) for k, v in words.items() if len(k) > 1}
 
         # remove words containing characters from other languages.
-        words = {k: v for k, v in words.items() if not self.language_utils.is_word_contains_letters_from_other_languages(k)}
+        words = {k: v for k, v in words.items() if not self._language_utils.is_word_contains_letters_from_other_languages(k)}
 
         # normalize values
         max_counter = max(words.values())
@@ -99,7 +98,7 @@ class SplinterTrainer:
 
     def initialize_reductions_dict(self, max_length):
         # adding single chars to the map, so "root" letters will also be converted when encoding the text
-        single_chars = self.language_utils.get_language_alphabet()
+        single_chars = self._language_utils.get_language_alphabet()
         reductions = {1: {single_char: 1 for single_char in single_chars}}
     
         for i in range(4, max_length + 1):
@@ -157,12 +156,9 @@ class SplinterTrainer:
         return max_score_reduction
     
     def save_result_file(self, file_name, data):
-        if not os.path.exists(get_splinter_dir()):
-            os.makedirs(get_splinter_dir())
-    
-        with open(f'{get_splinter_dir()}/{file_name}.json', 'w') as file:
+        with open(self._home.get_splinter_dir() / f'{file_name}.json', 'w') as file:
             json.dump(data, file, indent='\t')
     
         # keep a copy of results in the log dir
-        with open(f'{get_logs_dir()}/{file_name}.json', 'w') as file:
+        with open(self._home.get_logs_dir() /  f'{file_name}.json', 'w') as file:
             json.dump(data, file, indent='\t')

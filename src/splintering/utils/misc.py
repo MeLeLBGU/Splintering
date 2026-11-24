@@ -2,30 +2,30 @@ import json
 import re
 from collections import Counter
 
-from splintering.utils.path_utils import get_splinter_dir, get_logs_dir
+from splintering.utils.paths import SplinterPaths
 
 
-def add_static_result_to_file(result):
-    with open(f'{get_logs_dir()}/static_checks_results.json', 'a', encoding='utf-8') as file:
+def add_static_result_to_file(home: SplinterPaths, result: dict):
+    with open(home.get_logs_dir() / "static_checks_results.json", 'a', encoding='utf-8') as file:
         file.write('\n')
         json.dump(result, file, indent='\t')
 
 
-def get_reductions_map_from_file():
-    with open(f'{get_splinter_dir()}/reductions_map.json', 'r') as file:
+def get_reductions_map_from_file(home: SplinterPaths):
+    with open(home.get_splinter_dir() / "reductions_map.json", 'r') as file:
         data = json.load(file)
     data = {int(key): value for key, value in data.items()}
     return data
 
 
-def get_new_unicode_chars_map_from_file():
-    with open(f'{get_splinter_dir()}/new_unicode_chars.json', 'r') as file:
+def get_new_unicode_chars_map_from_file(home: SplinterPaths):
+    with open(home.get_splinter_dir() / "new_unicode_chars.json", 'r') as file:
         data = json.load(file)
     return data
 
 
-def get_new_unicode_chars_inverted_map_from_file():
-    with open(f'{get_splinter_dir()}/new_unicode_chars_inverted.json', 'r') as file:
+def get_new_unicode_chars_inverted_map_from_file(home: SplinterPaths):
+    with open(home.get_splinter_dir() / "new_unicode_chars_inverted.json", 'r') as file:
         data = json.load(file)
     return data
 
@@ -61,11 +61,11 @@ def get_letters_frequency(words):
     return letters_frequency
 
 
-def decode_tokens_vocab_file(tokens_vocab_file):
+def decode_tokens_vocab_file(home: SplinterPaths, tokens_vocab_file):
     with open(f'{tokens_vocab_file}.vocab', 'r', encoding='utf-8') as file:
         encoded_text = file.read()
 
-    new_unicode_chars_inverted_map = get_new_unicode_chars_inverted_map_from_file()
+    new_unicode_chars_inverted_map = get_new_unicode_chars_inverted_map_from_file(home)
     encoded_tokens = encoded_text.splitlines()
     decoded_tokens = list()
     for encoded_token in encoded_tokens:
