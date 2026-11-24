@@ -14,8 +14,10 @@ from splintering.text_processors import TextProcessorWithEncoding
 from splintering.utils.languages import LanguageUtilsFactory, Language
 from splintering.utils.paths import SplinterPaths
 from splintering.utils.misc import get_corpus_name
+from splintering.utils.logger import initialize_logger
 
 folder = SplinterPaths("example")
+logger = initialize_logger(folder)
 language = Language.find("Hebrew")
 train_dataset_path = 'wikimedia/wikipedia'
 train_dataset_name = f'20231101.{language}'
