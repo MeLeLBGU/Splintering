@@ -1,7 +1,7 @@
 from scripts.params import create_experiment_allletters, Language
 
 from splintering.utils.languages import LanguageUtilsFactory
-from splintering.utils.path_utils import SplinterPaths
+from splintering.utils.paths import SplinterPaths
 from splintering.experiments.compare_vocabs import list_all_vocab_files, decode_splintered_vocab, compare_vocabs
 
 

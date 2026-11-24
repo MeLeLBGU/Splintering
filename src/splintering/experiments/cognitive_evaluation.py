@@ -6,7 +6,7 @@ from scipy.stats import pearsonr
 
 from splintering.utils.corpus_tools import TextProcessorInterface
 from splintering.utils.logger import get_logger
-from splintering.utils.path_utils import SplinterPaths
+from splintering.utils.paths import SplinterPaths
 
 
 def save_cognitive_evaluation_corpus(home: SplinterPaths, text_processor: TextProcessorInterface):

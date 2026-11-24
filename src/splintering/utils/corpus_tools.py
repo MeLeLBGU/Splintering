@@ -9,7 +9,7 @@ import sentencepiece as spm
 from datasets import load_dataset
 
 from splintering.utils.misc import get_corpus_name
-from splintering.utils.path_utils import SplinterPaths
+from splintering.utils.paths import SplinterPaths
 from splintering.utils.logger import get_logger
 from splintering.utils.languages import LanguageUtilsInterface
 

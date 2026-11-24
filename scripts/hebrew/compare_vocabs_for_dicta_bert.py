@@ -1,6 +1,6 @@
 from scripts.params import create_experiment_allletters, Language
 
-from splintering.utils.path_utils import SplinterPaths
+from splintering.utils.paths import SplinterPaths
 from splintering.utils.languages import HebrewUtils
 from splintering.experiments.compare_vocabs_for_dicta_bert import get_dicta_bert_tokens, compare_vocabs
 

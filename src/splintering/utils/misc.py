@@ -2,7 +2,7 @@ import json
 import re
 from collections import Counter
 
-from splintering.utils.path_utils import SplinterPaths
+from splintering.utils.paths import SplinterPaths
 
 
 def add_static_result_to_file(home: SplinterPaths, result: dict):

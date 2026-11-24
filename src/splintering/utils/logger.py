@@ -1,6 +1,6 @@
 import logging
 
-from splintering.utils.path_utils import SplinterPaths
+from splintering.utils.paths import SplinterPaths
 
 logger = None
 

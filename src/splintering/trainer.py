@@ -5,7 +5,7 @@ from datasets import load_dataset
 from splintering.utils.corpus_tools import CorpusWordsExtractor
 from splintering.utils.languages import LanguageUtilsInterface
 from splintering.utils.logger import get_logger
-from splintering.utils.path_utils import SplinterPaths
+from splintering.utils.paths import SplinterPaths
 from splintering.utils.misc import get_words_dict_by_length, get_permutation, get_corpus_name
 
 

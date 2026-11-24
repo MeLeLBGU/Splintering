@@ -3,7 +3,7 @@ from scripts.logger import get_logger, initialize_logger
 
 from splintering.utils.misc import add_static_result_to_file
 from splintering.experiments.cognitive_evaluation import tokenize_cognitive_evaluation_file, run_cognitive_evaluation
-from splintering.utils.path_utils import SplinterPaths
+from splintering.utils.paths import SplinterPaths
 
 experiment = create_all_experiments(SplinterPaths("cognitive_eval"))[0]
 experiment.PATHS.create_experiment_dirs()

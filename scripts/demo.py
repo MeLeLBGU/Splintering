@@ -6,7 +6,7 @@ import sentencepiece as spm
 from splintering.text_processors import TextProcessorForDemo
 from splintering.utils.languages import LanguageUtilsFactory
 from splintering.utils.languages import LanguageUtilsInterface
-from splintering.utils.path_utils import SplinterPaths
+from splintering.utils.paths import SplinterPaths
 from splintering.utils.misc import (get_reductions_map_from_file, get_new_unicode_chars_map_from_file,
                                     get_new_unicode_chars_inverted_map_from_file)
 

@@ -8,7 +8,7 @@ from splintering.text_processors import TextProcessorBaseline, TextProcessorWith
 from splintering.utils.languages import LanguageUtilsFactory
 from splintering.utils.static_checks import run_static_checks, run_types_length_distribution
 from scripts.train_tokenizer import train_tokenizer
-from splintering.utils.path_utils import SplinterPaths
+from splintering.utils.paths import SplinterPaths
 from splintering.utils.misc import add_static_result_to_file, get_corpus_name
 
 

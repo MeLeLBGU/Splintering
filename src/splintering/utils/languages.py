@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from langcodes import Language
 import re
 
-from splintering.utils.path_utils import SplinterPaths
+from splintering.utils.paths import SplinterPaths
 if TYPE_CHECKING:
     from splintering.utils.corpus_tools import TextProcessorInterface
 

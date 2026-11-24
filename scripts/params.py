@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from langcodes import Language
 import copy
 
-from splintering.utils.path_utils import SplinterPaths
+from splintering.utils.paths import SplinterPaths
 
 
 PATH_DATA = Path(__file__).resolve().parent.parent / "data"

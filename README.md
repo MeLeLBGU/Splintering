@@ -12,7 +12,7 @@ The following example trains Splinter on Hebrew Wikipedia, encodes the training 
 from splintering.trainer import SplinterTrainer
 from splintering.text_processors import TextProcessorWithEncoding
 from splintering.utils.languages import LanguageUtilsFactory, Language
-from splintering.utils.path_utils import SplinterPaths
+from splintering.utils.paths import SplinterPaths
 from splintering.utils.misc import get_corpus_name
 
 folder = SplinterPaths("example")
@@ -36,6 +36,7 @@ tokenizer_type = 'bpe'
 vocab_size = 128_000
 
 from scripts.train_tokenizer import train_tokenizer  # Thin wrapper around SentencePiece; you can use any package that takes a string corpus.
+
 tokenizer_path = folder.get_tokenizer_path(tokenizer_type=tokenizer_type, vocab_size=vocab_size)
 train_tokenizer(folder, tokenizer_type=tokenizer_type, vocab_size=vocab_size, input_path=tokenizer_corpus_path, output_path=tokenizer_path)
 ```

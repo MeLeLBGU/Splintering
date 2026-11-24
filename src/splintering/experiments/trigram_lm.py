@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 from tqdm import tqdm
 
 from splintering.utils.logger import get_logger
-from splintering.utils.path_utils import SplinterPaths
+from splintering.utils.paths import SplinterPaths
 
 
 def test_perplexity(home: SplinterPaths, corpus_name, train_model: bool):

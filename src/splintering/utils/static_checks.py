@@ -8,7 +8,7 @@ import tokenization_scorer
 from tqdm import tqdm
 
 from splintering.utils.logger import get_logger
-from splintering.utils.path_utils import SplinterPaths
+from splintering.utils.paths import SplinterPaths
 
 
 # ------------------------------------------------------------------------

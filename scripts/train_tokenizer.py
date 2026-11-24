@@ -2,7 +2,7 @@ import sentencepiece as spm
 
 from splintering.utils.logger import get_logger
 from splintering.utils.misc import decode_tokens_vocab_file
-from splintering.utils.path_utils import SplinterPaths
+from splintering.utils.paths import SplinterPaths
 
 
 def train_tokenizer(paths: SplinterPaths, tokenizer_type, vocab_size, input_path, output_path, is_encoded: bool=True):
